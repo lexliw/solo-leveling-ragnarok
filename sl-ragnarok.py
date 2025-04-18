@@ -213,3 +213,90 @@ for folder in onlyfolders:
 
 
 # %%
+# %%
+# cria os index.html
+from os import listdir
+from os.path import isfile, isdir, join
+
+mypath = './'
+
+onlyfolders = [f for f in listdir(mypath) if isdir(join(mypath, f))]
+onlyfolders.sort()
+onlyfolders.remove('.git')
+print(onlyfolders)
+
+titulo = 'Solo Leveling: Ragnarok'
+conteudo = ''
+for folder in onlyfolders:
+    conteudo += f'<a href="/{folder}/index.html">{folder}</a>'
+
+with open('template-menu.html', 'r') as f:
+    template = f.readlines()
+
+for i in range(len(template)):
+    template[i] = template[i].replace('--titulo-manga--', titulo).replace('<!--chapter-list-->', conteudo)
+
+print('./index.html')
+with open('./index.html', 'w') as f:
+    f.writelines(template)
+f.close()
+
+for i in range(len(onlyfolders)):
+    chapterFolder = f'./{onlyfolders[i]}/'
+    anterior = '/solo-leveling-ragnarok/'
+    proximo = '/solo-leveling-ragnarok/'
+    menu = '/solo-leveling-ragnarok/'
+    if i - 1 >= 0: 
+        anterior = f'/solo-leveling-ragnarok/{onlyfolders[i-1]}/'
+    if i + 1 <= len(onlyfolders)-1: 
+        proximo = f'/solo-leveling-ragnarok/{onlyfolders[i+1]}/'
+
+    onlyfiles = [f for f in listdir(chapterFolder) if isfile(join(chapterFolder, f))]
+    onlyfiles.sort()
+    if 'readme.md' in onlyfiles:
+        onlyfiles.remove('readme.md')
+    if 'index.html' in onlyfiles:
+        onlyfiles.remove('index.html')
+    
+    conteudo = ''
+
+    for file in onlyfiles:
+        conteudo += f'<img src="{file}"/>'
+
+    
+    with open('template-capitulo.html', 'r') as f:
+        template = f.readlines()
+
+    for x in range(len(template)):
+        template[x] = template[x].replace('--titulo-manga--', titulo).replace('--capitulo--', onlyfolders[i]).replace('--proximoCapitulo.html--', proximo).replace('--capituloAnterior.html--', anterior).replace('--menu.html--', menu).replace('<!--manga-pages-->', conteudo)
+
+    fileindex = f'{chapterFolder}index.html'
+    print(fileindex)
+    with open(fileindex, 'w') as f:
+        f.writelines(template)
+    f.close()
+
+# %%
+#apagar readmes
+import os
+
+def apagar_readmes(raiz="."):
+    arquivos_apagados = 0
+    for pasta_atual, subpastas, arquivos in os.walk(raiz):
+        for arquivo in arquivos:
+            if arquivo.lower() == "readme.md":
+                caminho_arquivo = os.path.join(pasta_atual, arquivo)
+                try:
+                    os.remove(caminho_arquivo)
+                    print(f"🗑️ Apagado: {caminho_arquivo}")
+                    arquivos_apagados += 1
+                except Exception as e:
+                    print(f"⚠️ Erro ao apagar {caminho_arquivo}: {e}")
+    if arquivos_apagados == 0:
+        print("✅ Nenhum README.md encontrado.")
+    else:
+        print(f"✅ Total de arquivos README.md apagados: {arquivos_apagados}")
+
+# Use o diretório atual como raiz ou passe um caminho específico
+apagar_readmes(".")
+# %%
