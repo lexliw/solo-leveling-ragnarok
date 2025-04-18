@@ -228,7 +228,7 @@ print(onlyfolders)
 titulo = 'Solo Leveling: Ragnarok'
 conteudo = ''
 for folder in onlyfolders:
-    conteudo += f'<a href="/{folder}/index.html">{folder}</a>'
+    conteudo += f'<a href="/solo-leveling-ragnarok/{folder}/index.html">{folder}</a>'
 
 with open('template-menu.html', 'r') as f:
     template = f.readlines()
